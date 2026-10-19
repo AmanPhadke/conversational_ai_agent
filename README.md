@@ -90,41 +90,6 @@ The system extracts structured data (email, name) using regex patterns before se
 
 ---
 
-## WhatsApp Integration with Webhooks
-
-### Architecture Overview
-
-For WhatsApp integration I would use a webhook-based architecture(as mentioned in the assessment pdf):
-
-```
-WhatsApp Business API
-        ↓
-   [Webhook Server]
-        ↓
-   [Session Manager (such as Redis)]
-        ↓
-   [AutoStream Agent]
-        ↓
-   [Lead Database]
-```
-
-### Implementation Steps
-
-1. **Webhook Setup** - Register a webhook URL (e.g., `https://your-domain.com/webhooks/whatsapp`) in Meta's dashboard that receives all incoming WhatsApp messages.
- 
-2. **Message Handling** - When a user sends a message on WhatsApp, Meta sends a POST request to your webhook with the message content and sender's phone number.
- 
-3. **Session Management** - Store each user's conversation history in a session store (probably Redis database) using their phone number as the key. This allows the agent to maintain context across multiple WhatsApp messages over time.
- 
-4. **Agent Processing** - Pass the incoming message and conversation history to the AutoStream agent (same logic as the chatbot). The agent detects intent, retrieves knowledge base info, and collects lead details.
- 
-5. **Response Delivery** - Send the agent's response back to the user via WhatsApp Business API. If a lead is captured (all three fields collected), trigger the lead capture function and notify your backend systems.
- 
-6. **State Persistence** - The regex-based state extraction (email, name, platform) works identically. Each message updates the user's state in the session store. After lead capture, you can reset the conversation or archive it.
- 
-This approach is easy to scale easily. Each incoming WhatsApp message is a separate webhook call and session management handles concurrent conversations across thousands of users.
-
----
 
 ## Project Structure
 
